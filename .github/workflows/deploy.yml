@@ -37,7 +37,7 @@ jobs:
           LATEST=$IMAGE_BASE:latest
 
           docker build -t $IMAGE_NAME --build-arg ADDITIONAL_LOCALES="nb_NO en_GB" postgres-appliance
-          docker tag tester:$VERSION tester:latest
+          docker tag $IMAGE_NAME $LATEST
 
           docker push $IMAGE_NAME
           docker push $LATEST
