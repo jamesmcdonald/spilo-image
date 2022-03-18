@@ -1,4 +1,4 @@
-name: Deploy
+name: Build and push
 
 # Controls when the workflow will run
 on:
@@ -20,12 +20,24 @@ jobs:
           repository: zalando/spilo
           ref: 2.1-p4
 
-      - name: Build and tag
-        run: |
-          VERSION=$(git describe --tags --always --dirty)
-          #docker build -t tester:$VERSION --build-arg ADDITIONAL_LOCALES="nb_NO en_GB" postgres-appliance || exit 2
-          #docker tag tester:$VERSION tester:latest
+      - name: Become one with the container registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Test variable availability
+      - name: Build and push
         run: |
-          echo Version is $VERSION
+          # This version gets updated when spilo adds support for a new postgres version
+          APP_NAME=spilo-14
+          VERSION=$(git describe --tags --always --dirty)
+          IMAGE_BASE=ghcr.io/finn-no/$APP_NAME
+          IMAGE_NAME=$IMAGE_BASE:$VERSION
+          LATEST=$IMAGE_BASE:latest
+
+          docker build -t $IMAGE_NAME --build-arg ADDITIONAL_LOCALES="nb_NO en_GB" postgres-appliance
+          docker tag tester:$VERSION tester:latest
+
+          docker push $IMAGE_NAME
+          docker push $LATEST
