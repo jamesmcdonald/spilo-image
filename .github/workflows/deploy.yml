@@ -23,5 +23,5 @@ jobs:
       - name: Build and tag
         run: |
           VERSION=$(git describe --tags --always --dirty)
-          docker build -t tester:$VERSION .
+          docker build -t tester:$VERSION --build-arg ADDITIONAL_LOCALES="nb_NO en_GB" postgres-appliance || exit 2
           docker tag tester:$VERSION tester:latest
