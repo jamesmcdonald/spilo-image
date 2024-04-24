@@ -36,7 +36,7 @@ jobs:
           IMAGE_NAME=$IMAGE_BASE:$VERSION
           LATEST=$IMAGE_BASE:latest
 
-          docker build -t $IMAGE_NAME --build-arg ADDITIONAL_LOCALES="nb_NO en_GB" postgres-appliance
+          docker build -t $IMAGE_NAME --build-arg ADDITIONAL_LOCALES="nb_NO en_GB" --build-arg TIMESCALEDB_APACHE_ONLY=false postgres-appliance
           docker tag $IMAGE_NAME $LATEST
 
           docker push $IMAGE_NAME
